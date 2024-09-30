@@ -1,23 +1,39 @@
-import logo from './logo.svg';
+import { useDispatch, useSelector } from 'react-redux';
 import './App.css';
+import { useEffect } from 'react';
+import { fetchUsers } from './store/usersReduser';
+import { fetchUser } from './store/profileReduser';
+import UserProfile from './store/ProfileUser';
 
 function App() {
+  const { users, loading, error } = useSelector((state) => state.users);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchUsers())
+  }, [dispatch])
+
+  useEffect(() => {
+    dispatch(fetchUser())
+  }, [dispatch])
+  
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Пользователи</h1>
+      {loading && <p>Загрузка...</p>}
+      {error && <p>Ошибка {error}</p>}
+      {users.length ? <ul>{
+        users.map(user => (
+          <li key={user.id}>
+            {user.name}
+            <button onClick={() => dispatch(fetchUser(user.id))}>
+              Посмотреть профиль
+            </button>
+          </li>
+        ))
+      }
+      </ul> : null}
+      <UserProfile />
     </div>
   );
 }
