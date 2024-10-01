@@ -4,7 +4,14 @@ export const fetchUser = createAsyncThunk(
     'user/fetchUser',
     async (userID, thunkApi) => {
         try {
-            console.log(`userID: ${userID}`);
+            if (!userID) {
+                const response = await fetch(`https://jsonplaceholder.typicode.com/users/1`);
+                if (!response.ok) {
+                    throw new Error('Something go wrong')
+                }
+                return await response.json();
+                
+            }
             const response = await fetch(`https://jsonplaceholder.typicode.com/users/${userID}`);
             if (!response.ok) {
                 throw new Error('Something go wrong')
